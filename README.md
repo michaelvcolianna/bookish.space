@@ -1,9 +1,12 @@
 # bookish.space
 
-Building a proof-of-concept platform with the idea that the big social media accounts can be cluttered & harmful. Hoping to make something along the lines of:
+Building a proof-of-concept platform with the idea that the big social media accounts can be cluttered & harmful. Already built:
 
 - User signup, two-factor, email verification stuff
 - Some kind of simple user profile
+
+Hoping to add things along the lines of:
+
 - Multiple projects, which would consist of:
   - What the user seeks from the project – readers/feedback/an agent
   - Details depending on what the user is seeking (links for readers, type of feedback, query letters/synopses)
