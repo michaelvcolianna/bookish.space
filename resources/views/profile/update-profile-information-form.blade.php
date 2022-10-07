@@ -56,13 +56,23 @@
         <div class="col-span-6 sm:col-span-4">
             <x-jet-label for="name" value="{{ __('Name') }}" />
             <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model.defer="state.name" autocomplete="name" />
+            <x-shared.help.name />
             <x-jet-input-error for="name" class="mt-2" />
+        </div>
+
+        <!-- Handle -->
+        <div class="col-span-6 sm:col-span-4">
+            <x-jet-label for="handle" value="{{ __('Handle') }}" />
+            <x-jet-input id="handle" type="text" class="mt-1 block w-full" wire:model.defer="state.handle" autocomplete="nickname" />
+            <x-form.help>This is the name used in the URLs to anything you create. Keep in mind if you've established yourself with one handle and switch to another, it may take a while for search engines to reflect the change (if they do at all).</x-form.help>
+            <x-jet-input-error for="handle" class="mt-2" />
         </div>
 
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
             <x-jet-label for="email" value="{{ __('Email') }}" />
             <x-jet-input id="email" type="email" class="mt-1 block w-full" wire:model.defer="state.email" />
+            <x-shared.help.email>If you change this, you'll have to re-verify your account.</x-shared.help.email>
             <x-jet-input-error for="email" class="mt-2" />
 
             @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::emailVerification()) && ! $this->user->hasVerifiedEmail())

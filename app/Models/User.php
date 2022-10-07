@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Cviebrock\EloquentSluggable\Sluggable;
+use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,16 +12,15 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\SlugOptions;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
-    use HasSlug;
     use Notifiable;
+    use Sluggable;
+    use SluggableScopeHelpers;
     use SoftDeletes;
     use TwoFactorAuthenticatable;
 
@@ -30,7 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $fillable = [
         'name',
-        'slug',
+        'handle',
         'email',
         'password',
     ];
@@ -66,12 +67,17 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * Get the options for generating the slug.
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
      */
-    public function getSlugOptions(): SlugOptions
+    public function sluggable(): array
     {
-        return SlugOptions::create()
-            ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug');
+        return [
+            'handle' => [
+                'source' => 'name',
+                'includeTrashed' => true,
+            ],
+        ];
     }
 }
