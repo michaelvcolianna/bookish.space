@@ -67,6 +67,14 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
+     * Get the projects owned by the user.
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    /**
      * Return the sluggable configuration array for this model.
      *
      * @return array
