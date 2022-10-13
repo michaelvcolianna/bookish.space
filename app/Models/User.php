@@ -68,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $appends = [
         'profile_photo_url',
         'has_projects',
+        'latest_projects',
     ];
 
     /**
@@ -102,6 +103,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Attribute::make(
             get: fn () => $this->projects->count() > 0,
+        );
+    }
+
+    /**
+     * Get the latest projects.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function latestProjects(): Attribute
+    {
+        return Attribute::make(
+            get: function()
+            {
+                return $this->projects()
+                    ->orderByDesc('updated_at')
+                    ->paginate(5)
+                ;
+            },
         );
     }
 }

@@ -10,9 +10,22 @@
             @if(auth()->user()->has_projects)
                 <x-shared.split-section>
                     <x-slot:title>Projects</x-slot:title>
-                    <x-slot:description>This is a list of all your projects.</x-slot:description>
+                    <x-slot:description>
+                        This is a list of some recent projects.
+                    </x-slot:description>
 
-                    @dump(auth()->user()->projects)
+                    @foreach(auth()->user()->latest_projects as $project)
+                        <div class="flex justify-between items-center">
+                            <div class="font-bold">{{ $project->title }}</div>
+
+                            <a
+                                href="#{{ $project->slug }}"
+                                class="text-sm text-gray-700 underline"
+                            >
+                                View
+                            </a>
+                        </div>
+                    @endforeach
                 </x-shared.split-section>
             @endif
         </div>

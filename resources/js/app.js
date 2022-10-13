@@ -7,14 +7,30 @@ window.Alpine = Alpine
 Alpine.start()
 
 /**
- * Focus on new project title when form is shown
+ * Focus and select a field.
+ *
+ * @param  HTMLElement  field
+ * @return void
+ */
+const focusAndSelectField = (field) => {
+  field.focus()
+  field.select()
+}
+
+/**
+ * Focus on new project title when add form is visible.
  */
 Livewire.on('displayNewProjectForm', () => {
   setTimeout(() => {
-    let projectTitle = document.querySelector('#project-title')
+    focusAndSelectField(document.querySelector('#project-title'))
+  }, 50)
+})
 
-    // Focus & select, since closing doesn't clear prior data
-    projectTitle.focus()
-    projectTitle.select()
+/**
+ * Focus on a project title when editing form is visible.
+ */
+Livewire.on('editProject', id => {
+  setTimeout(() => {
+    focusAndSelectField(document.querySelector(`#project-${id}-title`))
   }, 50)
 })
