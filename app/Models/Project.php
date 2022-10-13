@@ -11,6 +11,21 @@ class Project extends Model
     use Sluggable;
     use SluggableScopeHelpers;
 
+    const SEEKING = [
+        [
+            'label' => 'Readers',
+            'name' => 'readers',
+        ],
+        [
+            'label' => 'Feedback',
+            'name' => 'feedback',
+        ],
+        [
+            'label' => 'An Agent',
+            'name' => 'agent',
+        ],
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -64,7 +79,7 @@ class Project extends Model
     public function sluggable(): array
     {
         return [
-            'handle' => [
+            'slug' => [
                 'source' => 'title',
                 'onUpdate' => true,
                 'includeTrashed' => true,

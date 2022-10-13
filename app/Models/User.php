@@ -5,6 +5,7 @@ namespace App\Models;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -32,6 +33,8 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'handle',
+        'pronouns',
+        'bio',
         'email',
         'password',
     ];
@@ -64,6 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $appends = [
         'profile_photo_url',
+        'has_projects',
     ];
 
     /**
@@ -87,5 +91,17 @@ class User extends Authenticatable implements MustVerifyEmail
                 'includeTrashed' => true,
             ],
         ];
+    }
+
+    /**
+     * Get whether the user has any projects.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function hasProjects(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->projects->count() > 0,
+        );
     }
 }
