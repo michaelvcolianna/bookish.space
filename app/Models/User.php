@@ -107,20 +107,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get the latest projects.
+     * Order the projects by most recently updated.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
     protected function latestProjects(): Attribute
     {
         return Attribute::make(
-            get: function()
-            {
-                return $this->projects()
-                    ->orderByDesc('updated_at')
-                    ->paginate(5)
-                ;
-            },
+            get: fn () => $this->projects()->orderByDesc('updated_at')->get(),
         );
     }
 }

@@ -16,7 +16,7 @@
                         Dashboard
                     </x-jet-nav-link>
 
-                    <x-jet-nav-link href="{{ route('projects') }}" :active="request()->routeIs('projects')">
+                    <x-jet-nav-link href="{{ route('projects.listing') }}" :active="request()->routeIs('projects.*')">
                         Projects
                     </x-jet-nav-link>
                 </div>
@@ -145,7 +145,7 @@
                 Dashboard
             </x-jet-responsive-nav-link>
 
-            <x-jet-responsive-nav-link href="{{ route('projects') }}" :active="request()->routeIs('projects')">
+            <x-jet-responsive-nav-link href="{{ route('projects.listing') }}" :active="request()->routeIs('projects.*')">
                 Projects
             </x-jet-responsive-nav-link>
         </div>

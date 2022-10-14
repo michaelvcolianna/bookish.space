@@ -10,6 +10,11 @@
 
         <div class="flex gap-8 items-center text-sm text-gray-600">
             <div>
+                <strong>Updated:</strong>
+                <span>{{ $project->updated_at->diffForHumans() }}</span>
+            </div>
+
+            <div>
                 <strong>Seeking:</strong>
                 <span>{{ $project->seeking_label }}</span>
             </div>

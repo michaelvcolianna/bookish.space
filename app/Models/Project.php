@@ -83,6 +83,15 @@ class Project extends Model
         'visibility_label',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+    ];
+
     // @todo Add Tag relationship
 
     // @todo Add Conversation relationship

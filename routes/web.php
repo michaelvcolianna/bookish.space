@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\Projects\Listing;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,5 +20,7 @@ $middleware = ['auth:sanctum', config('jetstream.auth_session'), 'verified'];
 Route::middleware($middleware)->group(function() {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-    Route::view('/projects', 'projects')->name('projects');
+    Route::group(['as' => 'projects.', 'prefix' => 'projects'], function() {
+        Route::get('/', Listing::class)->name('listing');
+    });
 });

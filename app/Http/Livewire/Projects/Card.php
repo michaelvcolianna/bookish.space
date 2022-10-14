@@ -160,14 +160,13 @@ class Card extends Component
      */
     public function deleteProject()
     {
-        session()->flash(
-            'flash.banner',
-            sprintf('Removed your project ‘%s’.', $this->project->title)
-        );
-        session()->flash('flash.bannerStyle', 'info');
+        $this->dispatchBrowserEvent('banner-message', [
+            'message' => sprintf('Removed your project "%s".', $this->project->title),
+            'style' => 'danger',
+        ]);
+
+        $this->emit('updateProjects');
 
         $this->project->delete();
-
-        return redirect()->route('projects');
     }
 }

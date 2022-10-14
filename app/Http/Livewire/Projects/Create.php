@@ -69,11 +69,13 @@ class Create extends Component
             'unlisted_at' => now(),
         ]);
 
-        session()->flash(
-            'flash.banner',
-            sprintf('Created your project "%s"!', $project->title)
-        );
+        $this->dispatchBrowserEvent('banner-message', [
+            'message' => sprintf('Created your project "%s"!', $project->title),
+            'style' => 'success',
+        ]);
 
-        return redirect()->route('projects');
+        $this->emit('updateProjects');
+
+        $this->reset();
     }
 }

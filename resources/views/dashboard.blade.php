@@ -14,7 +14,7 @@
                         This is a list of some recent projects.
                     </x-slot:description>
 
-                    @foreach(auth()->user()->latest_projects as $project)
+                    @foreach(auth()->user()->projects()->orderByDesc('updated_at')->paginate(5) as $project)
                         <div class="flex justify-between items-center">
                             <div class="font-bold">{{ $project->title }}</div>
 
