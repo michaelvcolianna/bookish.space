@@ -4,7 +4,7 @@
             <h2 class="text-lg font-bold">{{ $project->title }}</h2>
 
             <x-dynamic-component
-                component="project.pills.{{ $project->visibility_slug }}"
+                component="project.pills.{{ $project->visibility }}"
             />
         </div>
 
@@ -44,7 +44,7 @@
         </x-jet-secondary-button>
     </x-slot:actions>
 
-    <x-jet-confirmation-modal wire:model="confirmingProjectDeletion">
+    <x-jet-confirmation-modal wire:model.defer="confirmingProjectDeletion">
         <x-slot name="title">
             Delete Project
         </x-slot>
@@ -73,7 +73,7 @@
         </x-slot>
     </x-jet-confirmation-modal>
 
-    <x-jet-dialog-modal wire:model="editingProject">
+    <x-jet-dialog-modal wire:model.defer="editingProject">
         <x-slot name="title">
             Edit ‘{{ $project->title }}’
         </x-slot>
@@ -88,7 +88,7 @@
                     class="block mt-1 w-full"
                     id="project-{{ $project->id }}-title"
                     type="text"
-                    wire:model="project.title"
+                    wire:model.defer="project.title"
                     required
                     autofocus
                 />
@@ -96,26 +96,77 @@
             </div>
 
             <div class="mt-4">
-                <x-jet-label
-                    for="project-{{ $project->id }}-seeking"
-                    value="Seeking"
-                />
-                <select
-                    class="
-                        border-gray-300 focus:border-indigo-300 focus:ring
-                        focus:ring-indigo-200 focus:ring-opacity-50 rounded-md
-                        shadow-sm mt-1 w-full
-                    "
-                    id="project-{{ $project->id }}-seeking"
-                    wire:model="project.seeking"
-                    required
-                >
-                    <option value="null" disabled>--- Choose ---</option>
-                    @foreach(App\Models\Project::SEEKING as $n => $option)
-                        <option value="{{ $n }}">{{ $option['label'] }}</option>
+                <div class="block font-medium text-sm text-gray-700">
+                    Status
+                </div>
+                <div class="flex flex-wrap gap-y-2 items-center justify-between mt-2">
+                    @foreach(App\Models\Project::STATUS as $value => $label)
+                        <x-form.radio
+                            id="project-{{ $project->id }}-{{ $value }}"
+                            model="status"
+                            :value="$value"
+                            :label="$label"
+                        />
                     @endforeach
-                </select>
-                <x-jet-input-error for="project.seeking" class="mt-2" />
+                </div>
+                <x-jet-input-error for="status" class="mt-2" />
+                <x-form.help>
+                    <strong>Public</strong> projects are viewable by any user.
+                    <br />
+                    <strong>Unlisted</strong> projects are viewable by any user,
+                    but only if they know the URL.
+                    <br />
+                    <strong>Password-Protected</strong> projects are viewable
+                    only if the user knows the password you specify.
+                </x-form.help>
+            </div>
+
+            @if($status === 'password-protected')
+                <div class="mt-4">
+                    <x-jet-label
+                        for="project-{{ $project->id }}-password"
+                        value="Password"
+                    />
+                    @if($project->password)
+                        <x-form.help class="text-amber-700">
+                            A password is already set for this project. Enter a
+                            new one below if you'd like to change it, otherwise
+                            you can leave this field blank.
+                        </x-form.help>
+                    @endif
+                    <x-jet-input
+                        class="block mt-1 w-full"
+                        id="project-{{ $project->id }}-password"
+                        type="password"
+                        wire:model.defer="password"
+                    />
+                    <x-form.help>
+                        We don't enforce any rules for this password but keep in
+                        mind that others may be able to guess easy ones.
+                    </x-form.help>
+                    <x-jet-input-error for="password" class="mt-2" />
+                </div>
+            @endif
+
+            <div class="mt-4">
+                <div class="block font-medium text-sm text-gray-700">
+                    Seeking
+                </div>
+                <div class="flex flex-wrap gap-y-2 items-center justify-between mt-2">
+                    @foreach(App\Models\Project::SEEKING as $value => $label)
+                        <x-form.radio
+                            id="project-{{ $project->id }}-{{ $value }}"
+                            model="seeking"
+                            :value="$value"
+                            :label="$label"
+                        />
+                    @endforeach
+                </div>
+                <x-jet-input-error for="seeking" class="mt-2" />
+                <x-form.help>
+                    The answers at the bottom of this form will change depending
+                    on what you're seeking.
+                </x-form.help>
             </div>
 
             <div class="mt-4">
@@ -126,11 +177,14 @@
                 <x-form.textarea
                     class="block mt-1 w-full h-32"
                     id="project-{{ $project->id }}-preview"
-                    wire:model="project.preview"
+                    wire:model.defer="project.preview"
                 ></x-form.textarea>
+                <x-jet-input-error for="project.preview" class="mt-2" />
                 <x-form.help>
                     A short blurb describing your project – this could be the
-                    hook, a snippet, or a summary.
+                    hook, a snippet, or a summary. This field is optional but we
+                    highly recommend filling it out, even if you have an
+                    intriguing title.
                 </x-form.help>
             </div>
 
@@ -143,10 +197,12 @@
                     class="block mt-1 w-full"
                     id="project-{{ $project->id }}-genre"
                     type="text"
-                    wire:model="project.genre"
+                    wire:model.defer="project.genre"
                 />
+                <x-jet-input-error for="project.genre" class="mt-2" />
                 <x-form.help>
-                    Ex: Cookbook, YA Fantasy, Picture Book.
+                    Ex: Cookbook, YA Fantasy, Picture Book. This field is
+                    optional but may be helpful to fill out.
                 </x-form.help>
             </div>
 
@@ -159,8 +215,12 @@
                     class="block mt-1 w-full"
                     id="project-{{ $project->id }}-word_count"
                     type="text"
-                    wire:model="project.word_count"
+                    wire:model.defer="project.word_count"
                 />
+                <x-jet-input-error for="project.word_count" class="mt-2" />
+                <x-form.help>
+                    This field is optional but may be helpful to fill out.
+                </x-form.help>
             </div>
 
             <div class="mt-4">
@@ -171,11 +231,31 @@
                 <x-form.textarea
                     class="block mt-1 w-full h-32"
                     id="project-{{ $project->id }}-similar_works"
-                    wire:model="project.similar_works"
+                    wire:model.defer="project.similar_works"
                 ></x-form.textarea>
+                <x-jet-input-error for="project.similar_works" class="mt-2" />
                 <x-form.help>
                     Don't limit yourself to other books – sometimes, a movie or
-                    TV show makes a great comp.
+                    TV show makes a great comp. This field is optional but may
+                    be helpful to fill out.
+                </x-form.help>
+            </div>
+
+            <div class="mt-4">
+                <x-jet-label
+                    for="project-{{ $project->id }}-target_audience"
+                    value="Target Audience"
+                />
+                <x-form.textarea
+                    class="block mt-1 w-full h-32"
+                    id="project-{{ $project->id }}-target_audience"
+                    wire:model.defer="project.target_audience"
+                ></x-form.textarea>
+                <x-jet-input-error for="project.target_audience" class="mt-2" />
+                <x-form.help>
+                    The kind(s) of readers you think this project will appeal to
+                    the most. This field is optional but may be helpful to fill
+                    out.
                 </x-form.help>
             </div>
 
@@ -187,20 +267,77 @@
                 <x-form.textarea
                     class="block mt-1 w-full h-32"
                     id="project-{{ $project->id }}-content_notices"
-                    wire:model="project.content_notices"
+                    wire:model.defer="project.content_notices"
                 ></x-form.textarea>
+                <x-jet-input-error for="project.content_notices" class="mt-2" />
                 <x-form.help>
                     Any information that might help a reader who is sensitive to
                     certain content decide whether they can comfortably read
-                    your project.
+                    your project. (Think of guidance warnings or notices about
+                    flashing lights proceeding a movie or TV show.) This field
+                    is optional but we recommend it, especially if your work
+                    contains subject matter that others need to avoid.
                 </x-form.help>
             </div>
 
-            @if($project->is_seeking_agent)
-                <hr class="mt-4" />
+            <hr class="mt-4" />
 
-                <div class="mt-4 text-lg font-bold">For Agents:</div>
+            @if($seeking === 'readers')
+                <div class="mt-4">
+                    <x-jet-label
+                        for="project-{{ $project->id }}-content_link"
+                        value="Content Link"
+                    />
+                    <x-jet-input
+                        class="block mt-1 w-full"
+                        id="project-{{ $project->id }}-content_link"
+                        type="text"
+                        wire:model.defer="project.content_link"
+                    />
+                    <x-jet-input-error
+                        for="project.content_link"
+                        class="mt-2"
+                    />
+                    <x-form.help>
+                        The URL to your story.
+                    </x-form.help>
+                </div>
+            @endif
 
+            @if($seeking === 'feedback')
+                <div class="mt-4">
+                    <div class="block font-medium text-sm text-gray-700">
+                        Feedback Type
+                    </div>
+                    <div class="flex flex-wrap gap-y-2 items-center justify-between mt-2">
+                        @foreach(App\Models\Project::FEEDBACK as $value => $label)
+                            <x-form.radio
+                                id="project-{{ $project->id }}-{{ $value }}"
+                                model="project.feedback_type"
+                                :value="$value"
+                                :label="$label"
+                            />
+                        @endforeach
+                    </div>
+                    <x-jet-input-error
+                        for="project.feedback_type"
+                        class="mt-2"
+                    />
+                    <x-form.help>
+                        <strong>Positivity Passes</strong> are for when you're
+                        looking to see what's really working in the project.
+                        <br />
+                        <strong>Critiques</strong> can be overall or for
+                        structure, plot, or other elements.
+                        <br />
+                        <strong>Editorial</strong> feedback can be a deep-dive
+                        into capitalization/punctuation/etc. or seeking the
+                        services of a professional editor.
+                    </x-form.help>
+                </div>
+            @endif
+
+            @if($seeking === 'agent')
                 <div class="mt-4">
                     <x-jet-label
                         for="project-{{ $project->id }}-query_letter"
@@ -209,10 +346,15 @@
                     <x-form.textarea
                         class="block mt-1 w-full h-80"
                         id="project-{{ $project->id }}-query_letter"
-                        wire:model="project.query_letter"
+                        wire:model.defer="project.query_letter"
                     ></x-form.textarea>
+                    <x-jet-input-error
+                        for="project.query_letter"
+                        class="mt-2"
+                    />
                     <x-form.help>
-                        For tips on crafting a catchy query letter, [xyz].
+                        For tips on crafting a catchy query letter, [link to
+                        come].
                     </x-form.help>
                 </div>
 
@@ -224,17 +366,24 @@
                     <x-form.textarea
                         class="block mt-1 w-full h-96"
                         id="project-{{ $project->id }}-synopsis"
-                        wire:model="project.synopsis"
+                        wire:model.defer="project.synopsis"
                     ></x-form.textarea>
+                    <x-jet-input-error for="project.synopsis" class="mt-2" />
                     <x-form.help>
                         For tips on getting the important bits into your
-                        synopsis, [xyz].
+                        synopsis, [link to come].
                     </x-form.help>
                 </div>
             @endif
         </x-slot>
 
         <x-slot name="footer">
+            @if($errors->any())
+                <p class="text-sm text-red-600 mr-4 self-center" role="alert">
+                    Please double-check the fields above for errors.
+                </p>
+            @endif
+
             <x-jet-secondary-button
                 wire:click="cancelEditProject"
                 wire:loading.attr="disabled"

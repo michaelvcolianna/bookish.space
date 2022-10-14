@@ -9,13 +9,15 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @forelse(auth()->user()->projects as $project)
-                <livewire:projects.card :project="$project" />
-            @empty
-                <div class="italic text-gray-500">
-                    You don't have any projects yet.
-                </div>
-            @endforelse
+            <div class="grid gap-8">
+                @forelse(auth()->user()->projects as $project)
+                    <livewire:projects.card :project="$project" />
+                @empty
+                    <div class="italic text-gray-500">
+                        You don't have any projects yet.
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 </x-app-layout>

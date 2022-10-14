@@ -42,8 +42,8 @@
                     required
                 >
                     <option value="null" disabled>--- Choose ---</option>
-                    @foreach(App\Models\Project::SEEKING as $n => $option)
-                        <option value="{{ $n }}">{{ $option['label'] }}</option>
+                    @foreach(App\Models\Project::SEEKING as $value => $label)
+                        <option value="{{ $value }}">{{ $label }}</option>
                     @endforeach
                 </select>
                 <x-jet-input-error for="seeking" class="mt-2" />

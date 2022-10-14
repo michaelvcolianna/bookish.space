@@ -20,12 +20,13 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->string('title');
             $table->string('slug');
-            $table->tinyInteger('seeking');
-            $table->tinyInteger('reader_type')->nullable();
-            $table->tinyInteger('feedback_type')->nullable();
+            $table->string('seeking');
+            $table->string('content_link', 2048)->nullable();
+            $table->string('feedback_type')->nullable();
             $table->string('genre')->nullable();
             $table->string('word_count')->nullable();
             $table->text('similar_works')->nullable();
+            $table->text('target_audience')->nullable();
             $table->text('preview')->nullable();
             $table->text('content_notices')->nullable();
             $table->text('query_letter')->nullable();

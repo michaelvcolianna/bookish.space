@@ -11,10 +11,8 @@ class Create extends Component
     /** @var boolean */
     public $displayingForm;
 
-    /** @var integer */
-    public $seeking = null;
-
     /** @var string */
+    public $seeking = null;
     public $title;
 
     /**
@@ -28,7 +26,7 @@ class Create extends Component
             'title' => 'required',
             'seeking' => [
                 'required',
-                'integer',
+                'string',
                 Rule::in(array_keys(Project::SEEKING)),
             ],
         ];
@@ -72,11 +70,10 @@ class Create extends Component
         ]);
 
         session()->flash(
-            'banner',
+            'flash.banner',
             sprintf('Created your project "%s"!', $project->title)
         );
 
-        // @todo Redirect to specific project route with $project->slug
         return redirect()->route('projects');
     }
 }

@@ -14,19 +14,22 @@ class Project extends Model
     use SluggableScopeHelpers;
     use SoftDeletes;
 
+    const FEEDBACK = [
+        'positivity-pass' => 'Positivity Pass',
+        'critique' => 'Critique',
+        'editorial' => 'Editorial',
+    ];
+
     const SEEKING = [
-        [
-            'label' => 'Readers',
-            'name' => 'readers',
-        ],
-        [
-            'label' => 'Feedback',
-            'name' => 'feedback',
-        ],
-        [
-            'label' => 'An Agent',
-            'name' => 'agent',
-        ],
+        'readers' => 'Readers',
+        'feedback' => 'Feedback',
+        'agent' => 'An Agent',
+    ];
+
+    const STATUS = [
+        'public' => 'Public',
+        'unlisted' => 'Unlisted',
+        'password-protected' => 'Password-Protected',
     ];
 
     /**
@@ -39,26 +42,18 @@ class Project extends Model
         'title',
         'slug',
         'seeking',
-        'reader_type',
+        'content_link',
         'feedback_type',
         'genre',
         'word_count',
         'similar_works',
+        'target_audience',
         'preview',
         'content_notices',
         'query_letter',
         'synopsis',
         'password',
         'unlisted_at',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
     ];
 
     /**
@@ -76,6 +71,7 @@ class Project extends Model
      * @var array
      */
     protected $appends = [
+        'feedback_label',
         'is_password_protected',
         'is_public',
         'is_seeking_agent',
@@ -83,8 +79,8 @@ class Project extends Model
         'is_seeking_readers',
         'is_unlisted',
         'seeking_label',
+        'visibility',
         'visibility_label',
-        'visibility_slug',
     ];
 
     // @todo Add Tag relationship
@@ -108,64 +104,14 @@ class Project extends Model
     }
 
     /**
-     * Format the project's seeking type.
+     * Get the project's seeking label.
      *
      * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
     protected function seekingLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => static::SEEKING[$this->seeking]['label'],
-        );
-    }
-
-    /**
-     * Format the project's visibility.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function visibilityLabel(): Attribute
-    {
-        return Attribute::make(
-            get: function() {
-                switch(true)
-                {
-                    case filled($this->password):
-                        return 'Password-Protected';
-                        break;
-                    case filled($this->unlisted_at):
-                        return 'Unlisted';
-                        break;
-                    default:
-                        return 'Public';
-                        break;
-                }
-            },
-        );
-    }
-
-    /**
-     * Get the project's visibility slug.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function visibilitySlug(): Attribute
-    {
-        return Attribute::make(
-            get: function() {
-                switch(true)
-                {
-                    case filled($this->password):
-                        return 'password-protected';
-                        break;
-                    case filled($this->unlisted_at):
-                        return 'unlisted';
-                        break;
-                    default:
-                        return 'public';
-                        break;
-                }
-            },
+            get: fn () => static::SEEKING[$this->seeking],
         );
     }
 
@@ -201,7 +147,52 @@ class Project extends Model
     protected function isPublic(): Attribute
     {
         return Attribute::make(
-            get: fn () => empty($this->unlisted_at) && empty($this->password),
+            get: fn () => !$this->is_unlisted && !$this->is_password_protected,
+        );
+    }
+
+    /**
+     * Get the project's visibility.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function visibility(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->is_password_protected
+                    ? 'password-protected'
+                    : (
+                        $this->is_unlisted
+                            ? 'unlisted'
+                            : 'public'
+                    )
+                ;
+            },
+        );
+    }
+
+    /**
+     * Format the project's visiblity for display.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function visibilityLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => static::STATUS[$this->visibility],
+        );
+    }
+
+    /**
+     * Format the project's feedback type for display.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function feedbackLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => static::FEEDBACK[$this->feedback_type] ?? null,
         );
     }
 
@@ -213,13 +204,7 @@ class Project extends Model
     protected function isSeekingAgent(): Attribute
     {
         return Attribute::make(
-            get: function() {
-                $seeking = collect(static::SEEKING)->search(function($item) {
-                    return $item['name'] === 'agent';
-                });
-
-                return $this->seeking === $seeking;
-            },
+            get: fn () => $this->seeking === 'agent',
         );
     }
 
@@ -231,13 +216,7 @@ class Project extends Model
     protected function isSeekingFeedback(): Attribute
     {
         return Attribute::make(
-            get: function() {
-                $seeking = collect(static::SEEKING)->search(function($item) {
-                    return $item['name'] === 'feedback';
-                });
-
-                return $this->seeking === $seeking;
-            },
+            get: fn () => $this->seeking === 'feedback',
         );
     }
 
@@ -249,13 +228,7 @@ class Project extends Model
     protected function isSeekingReaders(): Attribute
     {
         return Attribute::make(
-            get: function() {
-                $seeking = collect(static::SEEKING)->search(function($item) {
-                    return $item['name'] === 'readers';
-                });
-
-                return $this->seeking === $seeking;
-            },
+            get: fn () => $this->seeking === 'readers',
         );
     }
 }

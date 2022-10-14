@@ -79,8 +79,8 @@
         <!-- Bio -->
         <div class="col-span-6 sm:col-span-4">
             <x-jet-label for="bio" value="Bio" />
-            <textarea id="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model.defer="state.bio"></textarea>
-            <x-form.help>An optional short bio to tell people about yourself.</x-form.help>
+            <textarea id="bio" class="mt-1 block w-full h-24 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model.defer="state.bio"></textarea>
+            <x-form.help>An optional short bio to tell people about yourself. This is similar to the bio you might put in a query letter.</x-form.help>
             <x-jet-input-error for="bio" class="mt-2" />
         </div>
 
