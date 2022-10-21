@@ -1,3 +1,5 @@
-<x-shared.pill class="bg-gray-600 border-gray-600">
+<x-shared.pill
+    {{ $attributes->merge(['class' => 'bg-gray-700 border-gray-700']) }}
+>
     Unlisted
 </x-shared.pill>

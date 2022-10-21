@@ -33,6 +33,10 @@
             </main>
         </div>
 
+        <div hidden>
+            <span id="label-external">Opens in a new window/tab</span>
+        </div>
+
         @stack('modals')
         @stack('scripts')
 

@@ -3,11 +3,11 @@
 namespace App\Http\Livewire\Projects;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Listing extends Component
 {
-    /** @var \Illuminate\Database\Eloquent\Collection */
-    public $projects;
+    use WithPagination;
 
     /**
      * Events the component listens for.
@@ -33,7 +33,11 @@ class Listing extends Component
      */
     public function render()
     {
-        return view('livewire.projects.listing');
+        return view('livewire.projects.listing', [
+            'projects' => auth()->user()->projects()
+                ->orderByDesc('updated_at')
+                ->paginate(10),
+        ]);
     }
 
     /**
@@ -43,6 +47,6 @@ class Listing extends Component
      */
     public function updateProjects()
     {
-        $this->projects = auth()->user()->projects()->orderByDesc('updated_at')->get();
+        //
     }
 }

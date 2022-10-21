@@ -56,7 +56,7 @@ class Create extends Component
     /**
      * Add a new project.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return void
      */
     public function addProject()
     {

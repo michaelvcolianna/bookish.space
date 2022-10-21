@@ -3,8 +3,6 @@
 namespace App\Http\Livewire\Projects;
 
 use App\Models\Project;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -18,7 +16,6 @@ class Card extends Component
     public $editingProject;
 
     /** @var string */
-    public $password;
     public $seeking;
     public $status;
 
@@ -40,7 +37,6 @@ class Card extends Component
                 'string',
                 Rule::in(array_keys(Project::SEEKING)),
             ],
-            'password' => 'required_if:status,password-protected',
             'project.title' => 'required',
             'project.content_link' => 'required_if:seeking,readers',
             'project.feedback_type' => 'required_if:seeking,feedback',
@@ -107,56 +103,23 @@ class Card extends Component
      */
     public function saveProject()
     {
-        // Fake password for validation if needed
-        if($this->project->password && !$this->password)
-        {
-            $this->password = time();
-        }
-
         $this->validate();
 
-        // Easy update for seeking
+        // Update the radios
         $this->project->seeking = $this->seeking;
-
-        // Remove unlisted if needed
-        if(Str::contains($this->status, ['public', 'password-protected']))
-        {
-            $this->project->unlisted_at = null;
-        }
-
-        // Remove password if needed
-        if(Str::contains($this->status, ['public', 'unlisted']))
-        {
-            $this->project->password = null;
-        }
-
-        // Unlist
-        if($this->status === 'unlisted')
-        {
-            $this->project->unlisted_at = now();
-        }
-
-        // Set password if needed
-        if
-        (
-            $this->status === 'password-protected'
-            &&
-            !Hash::check($this->password, $this->project->password)
-        )
-        {
-
-            $this->project->password = Hash::make($this->password);
-        }
+        $this->project->unlisted_at = $this->status === 'public'
+            ? null
+            : now()
+        ;
 
         $this->project->save();
-        $this->password = null;
         $this->editingProject = false;
     }
 
     /**
      * Delete the project.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return void
      */
     public function deleteProject()
     {

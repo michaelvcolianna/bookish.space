@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Livewire\Projects\Listing;
+use App\Http\Livewire\Projects\Listing as ListProjects;
+use App\Http\Livewire\Projects\View as ViewProject;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,7 @@ Route::middleware($middleware)->group(function() {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
     Route::group(['as' => 'projects.', 'prefix' => 'projects'], function() {
-        Route::get('/', Listing::class)->name('listing');
+        Route::get('/', ListProjects::class)->name('listing');
+        Route::get('/{handle}/{slug}', ViewProject::class)->name('view');
     });
 });

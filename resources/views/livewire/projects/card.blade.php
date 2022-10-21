@@ -1,14 +1,21 @@
 <x-shared.section>
     <div class="grid gap-2">
-        <div class="flex justify-between items-center">
-            <h2 class="text-lg font-bold">{{ $project->title }}</h2>
+        <div class="flex flex-wrap gap-2 md:flex-row justify-between items-center">
+            <h2 class="order-2 md:order-1 w-full md:w-auto">
+                <x-shared.page-link
+                    :href="$project->routeUrl()"
+                    :label="$project->title"
+                    class="text-lg font-bold"
+                />
+            </h2>
 
             <x-dynamic-component
                 component="project.pills.{{ $project->visibility }}"
+                class="order-1 md:order-2"
             />
         </div>
 
-        <div class="flex gap-8 items-center text-sm text-gray-600">
+        <div class="flex flex-wrap gap-4 md:gap-8 items-center text-sm text-gray-600">
             <div>
                 <strong>Updated:</strong>
                 <span>{{ $project->updated_at->diffForHumans() }}</span>
@@ -35,6 +42,12 @@
                 {{ $project->preview }}
             </div>
         @endif
+
+        <hr class="mt-2" />
+
+        <div class="italic text-sm">
+            tags coming soon
+        </div>
     </div>
 
     <x-slot:actions>
@@ -50,17 +63,17 @@
     </x-slot:actions>
 
     <x-jet-confirmation-modal wire:model.defer="confirmingProjectDeletion">
-        <x-slot name="title">
+        <x-slot:title>
             Delete Project
-        </x-slot>
+        </x-slot:title>
 
-        <x-slot name="content">
+        <x-slot:content>
             Are you sure you would like to delete this project? (Note: We'll
             hold on to the data for 30 days, so if you'd like to un-delete, just
             let us know.)
-        </x-slot>
+        </x-slot:content>
 
-        <x-slot name="footer">
+        <x-slot:footer>
             <x-jet-secondary-button
                 wire:click="$toggle('confirmingProjectDeletion')"
                 wire:loading.attr="disabled"
@@ -75,15 +88,15 @@
             >
                 Delete
             </x-jet-danger-button>
-        </x-slot>
+        </x-slot:footer>
     </x-jet-confirmation-modal>
 
     <x-jet-dialog-modal wire:model.defer="editingProject">
-        <x-slot name="title">
+        <x-slot:title>
             Edit ‘{{ $project->title }}’
-        </x-slot>
+        </x-slot:title>
 
-        <x-slot name="content">
+        <x-slot:content>
             <div>
                 <x-jet-label
                     for="project-{{ $project->id }}-title"
@@ -120,38 +133,8 @@
                     <br />
                     <strong>Unlisted</strong> projects are viewable by any user,
                     but only if they know the URL.
-                    <br />
-                    <strong>Password-Protected</strong> projects are viewable
-                    only if the user knows the password you specify.
                 </x-form.help>
             </div>
-
-            @if($status === 'password-protected')
-                <div class="mt-4">
-                    <x-jet-label
-                        for="project-{{ $project->id }}-password"
-                        value="Password"
-                    />
-                    @if($project->password)
-                        <x-form.help class="text-amber-700">
-                            A password is already set for this project. Enter a
-                            new one below if you'd like to change it, otherwise
-                            you can leave this field blank.
-                        </x-form.help>
-                    @endif
-                    <x-jet-input
-                        class="block mt-1 w-full"
-                        id="project-{{ $project->id }}-password"
-                        type="password"
-                        wire:model.defer="password"
-                    />
-                    <x-form.help>
-                        We don't enforce any rules for this password but keep in
-                        mind that others may be able to guess easy ones.
-                    </x-form.help>
-                    <x-jet-input-error for="password" class="mt-2" />
-                </div>
-            @endif
 
             <div class="mt-4">
                 <div class="block font-medium text-sm text-gray-700">
@@ -380,9 +363,9 @@
                     </x-form.help>
                 </div>
             @endif
-        </x-slot>
+        </x-slot:content>
 
-        <x-slot name="footer">
+        <x-slot:footer>
             @if($errors->any())
                 <p class="text-sm text-red-600 mr-4 self-center" role="alert">
                     Please double-check the fields above for errors.
@@ -403,6 +386,6 @@
             >
                 Save
             </x-jet-button>
-        </x-slot>
+        </x-slot:footer>
     </x-jet-dialog-modal>
 </x-shared.section>

@@ -31,7 +31,6 @@ return new class extends Migration
             $table->text('content_notices')->nullable();
             $table->text('query_letter')->nullable();
             $table->text('synopsis')->nullable();
-            $table->string('password')->nullable();
             $table->timestamp('unlisted_at')->nullable();
         });
     }

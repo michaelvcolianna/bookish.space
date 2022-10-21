@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
-use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +20,6 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasProfilePhoto;
     use Notifiable;
     use Sluggable;
-    use SluggableScopeHelpers;
     use SoftDeletes;
     use TwoFactorAuthenticatable;
 

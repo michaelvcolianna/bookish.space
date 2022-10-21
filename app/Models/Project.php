@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
-use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Project extends Model
 {
     use Sluggable;
-    use SluggableScopeHelpers;
     use SoftDeletes;
 
     const FEEDBACK = [
@@ -29,7 +27,6 @@ class Project extends Model
     const STATUS = [
         'public' => 'Public',
         'unlisted' => 'Unlisted',
-        'password-protected' => 'Password-Protected',
     ];
 
     /**
@@ -52,7 +49,6 @@ class Project extends Model
         'content_notices',
         'query_letter',
         'synopsis',
-        'password',
         'unlisted_at',
     ];
 
@@ -72,25 +68,18 @@ class Project extends Model
      */
     protected $appends = [
         'feedback_label',
-        'is_password_protected',
-        'is_public',
-        'is_seeking_agent',
-        'is_seeking_feedback',
-        'is_seeking_readers',
-        'is_unlisted',
         'seeking_label',
         'visibility',
         'visibility_label',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
+     * Get the user that owns the project.
      */
-    protected $hidden = [
-        'password',
-    ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     // @todo Add Tag relationship
 
@@ -115,48 +104,12 @@ class Project extends Model
     /**
      * Get the project's seeking label.
      *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     * @return string
      */
     protected function seekingLabel(): Attribute
     {
         return Attribute::make(
             get: fn () => static::SEEKING[$this->seeking],
-        );
-    }
-
-    /**
-     * Whether the project is unlisted.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function isUnlisted(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => filled($this->unlisted_at),
-        );
-    }
-
-    /**
-     * Whether the project is password-protected.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function isPasswordProtected(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => filled($this->password),
-        );
-    }
-
-    /**
-     * Whether the project is public.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function isPublic(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => !$this->is_unlisted && !$this->is_password_protected,
         );
     }
 
@@ -168,16 +121,7 @@ class Project extends Model
     protected function visibility(): Attribute
     {
         return Attribute::make(
-            get: function() {
-                return $this->is_password_protected
-                    ? 'password-protected'
-                    : (
-                        $this->is_unlisted
-                            ? 'unlisted'
-                            : 'public'
-                    )
-                ;
-            },
+            get: fn () => $this->isUnlisted() ? 'unlisted' : 'public',
         );
     }
 
@@ -206,38 +150,81 @@ class Project extends Model
     }
 
     /**
+     * Retrieve a Markdown field and format it.
+     *
+     * @param  string  $field
+     * @return string
+     */
+    public function markdown($field)
+    {
+        if($this->{$field})
+        {
+            return str($this->{$field})->markdown()->toHtmlString();
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether the project is public.
+     *
+     * @return boolean
+     */
+    public function isPublic()
+    {
+        return empty($this->unlisted_at);
+    }
+
+    /**
      * Whether the project is seeking an agent.
      *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     * @return boolean
      */
-    protected function isSeekingAgent(): Attribute
+    public function isSeekingAgent()
     {
-        return Attribute::make(
-            get: fn () => $this->seeking === 'agent',
-        );
+        return $this->seeking === 'agent';
     }
 
     /**
      * Whether the project is seeking feedbback.
      *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     * @return boolean
      */
-    protected function isSeekingFeedback(): Attribute
+    public function isSeekingFeedback()
     {
-        return Attribute::make(
-            get: fn () => $this->seeking === 'feedback',
-        );
+        return $this->seeking === 'feedback';
     }
 
     /**
      * Whether the project is seeking readers.
      *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     * @return boolean
      */
-    protected function isSeekingReaders(): Attribute
+    public function isSeekingReaders()
     {
-        return Attribute::make(
-            get: fn () => $this->seeking === 'readers',
-        );
+        return $this->seeking === 'readers';
+    }
+
+    /**
+     * Whether the project is unlisted.
+     *
+     * @return boolean
+     */
+    public function isUnlisted()
+    {
+        return filled($this->unlisted_at);
+    }
+
+    /**
+     * Get the project's URL.
+     *
+     * @return string
+     */
+    public function routeUrl()
+    {
+        return route('projects.view', [
+            'handle' => $this->user->handle,
+            'slug' => $this->slug,
+        ]);
     }
 }
