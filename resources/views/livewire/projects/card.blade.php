@@ -1,5 +1,5 @@
 <div class="sm:rounded-lg shadow-md">
-    <div class="bg-white p-4 grid gap-4">
+    <div class="bg-white p-4 sm:p-6 grid gap-4 sm:rounded-tl-lg sm:rounded-tr-lg">
         @if($editingProject)
             <h2 class="text-xl font-bold">
                 Project Settings
@@ -8,7 +8,10 @@
             <x-project submit="saveProject" :project="$project" />
         @else
             <h2 class="text-xl font-bold">
-                <a class="underline underline-offset-2" href="{{ $project->url() }}">
+                <a
+                    class="underline underline-offset-2"
+                    href="{{ $project->url() }}"
+                >
                     {{ $project->title }}
                 </a>
             </h2>
@@ -40,11 +43,22 @@
                     {{ $project->renderMarkdown('preview') }}
                 </div>
             @endif
+
+            @if($project->tags->isNotEmpty())
+                <div>
+                    tags
+                </div>
+            @endif
         @endif
     </div>
 
-    @can('update', $project)
-        <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 text-right gap-3">
+    <div
+        class="
+            flex flex-row justify-end px-6 py-4 bg-gray-100 gap-5 items-center
+            sm:rounded-bl-lg sm:rounded-br-lg
+        "
+    >
+        @can('update', $project)
             @if($editingProject)
                 <x-jet-secondary-button
                     wire:click="$toggle('editingProject')"
@@ -72,34 +86,81 @@
                     <x-icon name="settings" />
                     <span class="sr-only sm:not-sr-only">Edit Project</span>
                 </x-jet-secondary-button>
+
+                <x-jet-button
+                    wire:click="tagProject"
+                    class="flex items-center gap-2"
+                >
+                    <x-icon name="tag" />
+                    <span class="sr-only sm:not-sr-only">Tag Project</span>
+                </x-jet-button>
             @endif
-        </div>
 
-        <x-jet-confirmation-modal wire:model="confirmingDelete">
-            <x-slot:title>
-                Delete Project
-            </x-slot:title>
+            <x-jet-confirmation-modal wire:model="confirmingDelete">
+                <x-slot:title>
+                    Delete Project
+                </x-slot:title>
 
-            <x-slot:content>
-                Are you sure you want to delete "{{ $project->title }}"?
-            </x-slot:content>
+                <x-slot:content>
+                    Are you sure you want to delete "{{ $project->title }}"?
+                </x-slot:content>
 
-            <x-slot:footer>
-                <x-jet-secondary-button
-                    wire:click="$toggle('confirmingDelete')"
-                    wire:loading.attr="disabled"
-                >
-                    Cancel
-                </x-jet-secondary-button>
+                <x-slot:footer>
+                    <x-jet-secondary-button
+                        wire:click="$toggle('confirmingDelete')"
+                        wire:loading.attr="disabled"
+                    >
+                        Cancel
+                    </x-jet-secondary-button>
 
-                <x-jet-danger-button
-                    class="ml-3"
-                    wire:click="deleteProject"
-                    wire:loading.attr="disabled"
-                >
-                    Delete
-                </x-jet-danger-button>
-            </x-slot:footer>
-        </x-jet-confirmation-modal>
-    @endcan
+                    <x-jet-danger-button
+                        class="ml-3"
+                        wire:click="deleteProject"
+                        wire:loading.attr="disabled"
+                    >
+                        Delete
+                    </x-jet-danger-button>
+                </x-slot:footer>
+            </x-jet-confirmation-modal>
+
+            <x-jet-dialog-modal wire:model="taggingProject">
+                <x-slot:title>Tag Your Project</x-slot:title>
+
+                <x-slot:content>
+                    <div>
+                        Enter your tags for the project below by searching for
+                        existing ones or creating your own.
+                    </div>
+
+                    <em>@todo: Tag field with existing tags</em>
+                </x-slot:content>
+
+                <x-slot:footer>
+                    <x-jet-secondary-button
+                        wire:click="$set('taggingProject', false)"
+                        wire:loading.attr="disabled"
+                    >
+                        Cancel
+                    </x-jet-secondary-button>
+
+                    <x-jet-button
+                        class="ml-3"
+                        wire:click="saveTags"
+                        wire:loading.attr="disabled"
+                    >
+                        Save
+                    </x-jet-button>
+                </x-slot:footer>
+            </x-jet-dialog-modal>
+        @else
+            {{-- @todo Avatar or text "author" --}}
+            <span class="text-xs font-light uppercase justify-self-start">
+                Author
+            </span>
+
+            <a class="underline" href="{{ $project->user->url() }}">
+                {{ $project->user->name }}
+            </a>
+        @endcan
+    </div>
 </div>

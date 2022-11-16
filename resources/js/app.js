@@ -27,6 +27,13 @@ Livewire.on('displayNewProjectForm', () => {
 })
 
 /**
+ * Focus on ?? when tag form is shown.
+ */
+Livewire.on('displayTagProjectForm', ({ id }) => {
+  //
+})
+
+/**
  * Focus on project title when edit form is shown.
  */
 Livewire.on('displayEditProjectForm', ({ id }) => {

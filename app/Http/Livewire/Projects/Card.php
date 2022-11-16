@@ -10,6 +10,7 @@ class Card extends Component
 
     public $confirmingDelete;
     public $editingProject;
+    public $taggingProject;
 
     protected $rules = [
         'project.content_link' => 'nullable|required_if:project.seeking,readers',
@@ -34,6 +35,15 @@ class Card extends Component
     public function render()
     {
         return view('livewire.projects.card');
+    }
+
+    public function tagProject()
+    {
+        $this->taggingProject = true;
+
+        $this->emit('displayTagProjectForm', [
+            'id' => $this->project->id,
+        ]);
     }
 
     public function editProject()
@@ -73,5 +83,20 @@ class Card extends Component
         ]);
 
         $this->editingProject = false;
+    }
+
+    public function saveTags()
+    {
+        // @todo Tags
+
+        $this->dispatchBrowserEvent('banner-message', [
+            'message' => sprintf(
+                'Updated your project: "%s"!',
+                $this->project->title
+            ),
+            'style' => 'success',
+        ]);
+
+        $this->taggingProject = false;
     }
 }

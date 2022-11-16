@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Spatie\Tags\HasTags;
 
 class Project extends Model
 {
     use HasMarkdownFields;
     use HasSlug;
+    use HasTags;
     use SoftDeletes;
 
     const SEEKING = [

@@ -49,4 +49,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Project::class);
     }
+
+    public function url()
+    {
+        // return route('projects.view', [
+        //     'handle' => $this->user->handle,
+        //     'slug' => $this->slug,
+        // ]);
+        return '#';
+    }
 }
