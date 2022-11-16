@@ -2,134 +2,76 @@
 
 namespace App\Http\Livewire\Projects;
 
-use App\Models\Project;
-use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Card extends Component
 {
-    /** @var \App\Models\Project */
     public $project;
 
-    /** @var boolean */
-    public $confirmingProjectDeletion;
+    public $confirmingDelete;
     public $editingProject;
 
-    /** @var string */
-    public $seeking;
-    public $status;
+    protected $rules = [
+        'project.content_link' => 'nullable|required_if:project.seeking,readers',
+        'project.content_notices' => 'nullable',
+        'project.feedback_type' => 'nullable|required_if:project.seeking,feedback',
+        'project.genre' => 'required',
+        'project.preview' => 'nullable',
+        'project.query_letter' => 'nullable|required_if:project.seeking,agent',
+        'project.seeking' => 'required',
+        'project.similar_works' => 'nullable',
+        'project.synopsis' => 'nullable|required_if:project.seeking,agent',
+        'project.target_audience' => 'nullable',
+        'project.title' => 'required',
+        'project.word_count' => 'required',
+    ];
 
-    /**
-     * Validation rules.
-     *
-     * @return array
-     */
-    protected function rules()
-    {
-        return [
-            'status' => [
-                'required',
-                'string',
-                Rule::in(array_keys(Project::STATUS)),
-            ],
-            'seeking' => [
-                'required',
-                'string',
-                Rule::in(array_keys(Project::SEEKING)),
-            ],
-            'project.title' => 'required',
-            'project.content_link' => 'required_if:seeking,readers',
-            'project.feedback_type' => 'required_if:seeking,feedback',
-            'project.genre' => 'nullable',
-            'project.word_count' => 'nullable',
-            'project.similar_works' => 'nullable',
-            'project.target_audience' => 'nullable',
-            'project.preview' => 'nullable',
-            'project.content_notices' => 'nullable',
-            'project.query_letter' => 'required_if:seeking,agent',
-            'project.synopsis' => 'required_if:seeking,agent',
-        ];
-    }
-
-    /**
-     * Create a new component instance.
-     *
-     * @param  \App\Models\Project  $project
-     * @return void
-     */
-    public function mount(Project $project)
+    public function mount($project)
     {
         $this->project = $project;
-        $this->seeking = $project->seeking;
-        $this->status = $project->visibility;
     }
 
-    /**
-     * Get the view / contents that represents the component.
-     *
-     * @return \Illuminate\View\View
-     */
     public function render()
     {
         return view('livewire.projects.card');
     }
 
-    /**
-     * Edit the project.
-     *
-     * @return void
-     */
     public function editProject()
     {
         $this->editingProject = true;
-        $this->emit('editProject', $this->project->id);
+
+        $this->emit('displayEditProjectForm', [
+            'id' => $this->project->id,
+        ]);
     }
 
-    /**
-     * Cancel editing.
-     *
-     * @return void
-     */
-    public function cancelEditProject()
+    public function deleteProject()
     {
-        $this->editingProject = false;
-        $this->project->discardChanges();
+        $title = $this->project->title;
+
+        $this->project->delete();
+
+        $this->dispatchBrowserEvent('banner-message', [
+            'message' => sprintf('Deleted your project: "%s"!', $title),
+        ]);
+
+        $this->emit('updateProjects');
     }
 
-    /**
-     * Save changes to the project.
-     *
-     * @return void
-     */
     public function saveProject()
     {
         $this->validate();
 
-        // Update the radios
-        $this->project->seeking = $this->seeking;
-        $this->project->unlisted_at = $this->status === 'public'
-            ? null
-            : now()
-        ;
-
         $this->project->save();
-        $this->editingProject = false;
-    }
 
-    /**
-     * Delete the project.
-     *
-     * @return void
-     */
-    public function deleteProject()
-    {
         $this->dispatchBrowserEvent('banner-message', [
-            'message' => sprintf('Removed your project "%s".', $this->project->title),
-            'style' => 'danger',
+            'message' => sprintf(
+                'Updated your project: "%s"!',
+                $this->project->title
+            ),
+            'style' => 'success',
         ]);
 
-        $this->emit('updateProjects');
-
-        $this->project->delete();
+        $this->editingProject = false;
     }
 }

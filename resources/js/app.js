@@ -1,36 +1,36 @@
-import './bootstrap'
+import './bootstrap';
 
-import Alpine from 'alpinejs'
+import Alpine from 'alpinejs';
 
-window.Alpine = Alpine
+window.Alpine = Alpine;
 
-Alpine.start()
+Alpine.start();
 
 /**
  * Focus and select a field.
  *
- * @param  HTMLElement  field
+ * @param  HTMLElement field
  * @return void
  */
-const focusAndSelectField = (field) => {
+const focusAndSelect = (field) => {
   field.focus()
   field.select()
 }
 
 /**
- * Focus on new project title when add form is visible.
+ * Focus on new project title when add form is shown.
  */
 Livewire.on('displayNewProjectForm', () => {
   setTimeout(() => {
-    focusAndSelectField(document.querySelector('#project-title'))
+    focusAndSelect(document.querySelector('#project-title'))
   }, 50)
 })
 
 /**
- * Focus on a project title when editing form is visible.
+ * Focus on project title when edit form is shown.
  */
-Livewire.on('editProject', id => {
+Livewire.on('displayEditProjectForm', ({ id }) => {
   setTimeout(() => {
-    focusAndSelectField(document.querySelector(`#project-${id}-title`))
+    focusAndSelect(document.querySelector(`#project-${id}-title`))
   }, 50)
 })

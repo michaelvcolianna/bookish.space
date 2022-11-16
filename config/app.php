@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'bookish.space'),
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://bookish.space'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'America/New_York',
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -213,5 +213,89 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Project Genres
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'genres' => [
+        'fiction' => [
+            '__label' => 'Fiction',
+            'action-adventure' => 'Action/Adventure',
+            'chick-lit' => 'Chick Lit',
+            'childrens' => 'Children\'s',
+            'commercial' => 'Commercial',
+            'contemporary' => 'Contemporary',
+            'crime-police' => 'Crime/Police',
+            'erotica' => 'Erotica',
+            'family-saga' => 'Family Saga',
+            'fantasy' => 'Fantasy',
+            'general-fiction' => 'General Fiction',
+            'graphic-novel' => 'Graphic Novel',
+            'historical' => 'Historical',
+            'horror' => 'Horror',
+            'humor-satire' => 'Humor/Satire',
+            'lgbtq-plus' => 'LGBTQ+',
+            'literary-fiction' => 'Literary Fiction',
+            'middle-grade' => 'Middle Grade',
+            'military-espionage' => 'Military/Espionage',
+            'multicultural' => 'Multicultural',
+            'mystery' => 'Mystery',
+            'new-adult' => 'New Adult',
+            'offbeat-quirky' => 'Offbeat/Quirky',
+            'picture-book' => 'Picture Book',
+            'poetry' => 'Poetry',
+            'religious-inspirational' => 'Religious/Inspirational',
+            'romance' => 'Romance',
+            'science-fiction' => 'Science Fiction',
+            'short-story-collections' => 'Short Story Collections',
+            'thrillers-suspense' => 'Thrillers/Suspense',
+            'upmarket' => 'Upmarket',
+            'western' => 'Western',
+            'womens-fiction' => 'Women\'s Fiction',
+            'young-adult' => 'Young Adult',
+        ],
+        'nonfiction' => [
+            '__label' => 'Non-Fiction',
+            'art-photography' => 'Art/Photography',
+            'biography' => 'Biography',
+            'business-finance' => 'Business/Finance',
+            'cookbook' => 'Cookbook',
+            'cultural-social-issues' => 'Cultural/Social Issues',
+            'current-affairs-politics' => 'Current Affairs/Politics',
+            'decorating-design' => 'Decorating/Design',
+            'food-lifestyle' => 'Food/Lifestyle',
+            'gardening' => 'Gardening',
+            'general-non-fiction' => 'General Non-Fiction',
+            'health-fitness' => 'Health/Fitness',
+            'history' => 'History',
+            'how-to' => 'How To',
+            'humor-gift-book' => 'Humor/Gift Book',
+            'journalism' => 'Journalism',
+            'juvenile-graphic' => 'Juvenile/Graphic',
+            'lgbtq-plus' => 'LGBTQ+',
+            'memoir' => 'Memoir',
+            'military' => 'Military',
+            'multicultural' => 'Multicultural',
+            'narrative' => 'Narrative',
+            'nature-ecology' => 'Nature/Ecology',
+            'parenting' => 'Parenting',
+            'pets' => 'Pets',
+            'pop-culture' => 'Pop Culture',
+            'psychology' => 'Psychology',
+            'reference' => 'Reference',
+            'relationship-dating' => 'Relationship/Dating',
+            'religion-spirituality' => 'Religion/Spirituality',
+            'science-technology' => 'Science/Technology',
+            'self-help' => 'Self-Help',
+            'sports' => 'Sports',
+            'travel' => 'Travel',
+            'true-adventure-crime' => 'True Adventure/Crime',
+            'womens-issues' => 'Women\'s Issues',
+        ],
+    ],
 
 ];

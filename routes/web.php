@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Livewire\Projects\Listing as ListProjects;
-use App\Http\Livewire\Projects\View as ViewProject;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,12 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('welcome');
 
-$middleware = ['auth:sanctum', config('jetstream.auth_session'), 'verified'];
-Route::middleware($middleware)->group(function() {
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function() {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
-
-    Route::group(['as' => 'projects.', 'prefix' => 'projects'], function() {
-        Route::get('/', ListProjects::class)->name('listing');
-        Route::get('/{handle}/{slug}', ViewProject::class)->name('view');
-    });
+    Route::view('/projects', 'projects')->name('projects');
 });

@@ -2,46 +2,28 @@
 
 namespace App\Models;
 
-use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Sanctum\HasApiTokens;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens;
-    use HasFactory;
-    use HasProfilePhoto;
+    use HasSlug;
     use Notifiable;
-    use Sluggable;
     use SoftDeletes;
     use TwoFactorAuthenticatable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
     protected $fillable = [
         'name',
-        'handle',
-        'pronouns',
-        'bio',
+        'slug',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -49,70 +31,22 @@ class User extends Authenticatable implements MustVerifyEmail
         'two_factor_secret',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = [
-        'profile_photo_url',
-        'has_projects',
-        'latest_projects',
-    ];
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug')
+            ->slugsShouldBeNoLongerThan(32)
+            ->doNotGenerateSlugsOnUpdate()
+        ;
+    }
 
-    /**
-     * Get the projects owned by the user.
-     */
     public function projects()
     {
         return $this->hasMany(Project::class);
-    }
-
-    /**
-     * Return the sluggable configuration array for this model.
-     *
-     * @return array
-     */
-    public function sluggable(): array
-    {
-        return [
-            'handle' => [
-                'source' => 'name',
-                'includeTrashed' => true,
-            ],
-        ];
-    }
-
-    /**
-     * Get whether the user has any projects.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function hasProjects(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->projects->count() > 0,
-        );
-    }
-
-    /**
-     * Order the projects by most recently updated.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function latestProjects(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->projects()->orderByDesc('updated_at')->get(),
-        );
     }
 }

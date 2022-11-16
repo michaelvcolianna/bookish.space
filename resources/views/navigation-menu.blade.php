@@ -6,18 +6,18 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-svg.stack-of-books class="block h-9 w-auto" />
+                        <x-book class="block h-9 w-auto" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                        Dashboard
+                        {{ __('Dashboard') }}
                     </x-jet-nav-link>
 
-                    <x-jet-nav-link href="{{ route('projects.listing') }}" :active="request()->routeIs('projects.*')">
-                        Projects
+                    <x-jet-nav-link href="{{ route('projects') }}" :active="request()->routeIs('projects')">
+                        {{ __('Projects') }}
                     </x-jet-nav-link>
                 </div>
             </div>
@@ -43,17 +43,17 @@
                                 <div class="w-60">
                                     <!-- Team Management -->
                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                        Manage Team
+                                        {{ __('Manage Team') }}
                                     </div>
 
                                     <!-- Team Settings -->
                                     <x-jet-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
-                                        Team Settings
+                                        {{ __('Team Settings') }}
                                     </x-jet-dropdown-link>
 
                                     @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                                         <x-jet-dropdown-link href="{{ route('teams.create') }}">
-                                            Create New Team
+                                            {{ __('Create New Team') }}
                                         </x-jet-dropdown-link>
                                     @endcan
 
@@ -61,7 +61,7 @@
 
                                     <!-- Team Switcher -->
                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                        Switch Teams
+                                        {{ __('Switch Teams') }}
                                     </div>
 
                                     @foreach (Auth::user()->allTeams() as $team)
@@ -97,16 +97,16 @@
                         <x-slot name="content">
                             <!-- Account Management -->
                             <div class="block px-4 py-2 text-xs text-gray-400">
-                                Manage Account
+                                {{ __('Manage Account') }}
                             </div>
 
                             <x-jet-dropdown-link href="{{ route('profile.show') }}">
-                                Profile
+                                {{ __('Profile') }}
                             </x-jet-dropdown-link>
 
                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                 <x-jet-dropdown-link href="{{ route('api-tokens.index') }}">
-                                    API Tokens
+                                    {{ __('API Tokens') }}
                                 </x-jet-dropdown-link>
                             @endif
 
@@ -118,7 +118,7 @@
 
                                 <x-jet-dropdown-link href="{{ route('logout') }}"
                                          @click.prevent="$root.submit();">
-                                    Log Out
+                                    {{ __('Log Out') }}
                                 </x-jet-dropdown-link>
                             </form>
                         </x-slot>
@@ -128,7 +128,7 @@
 
             <!-- Hamburger -->
             <div class="-mr-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 focus:text-gray-500 transition">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -142,11 +142,11 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-jet-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                Dashboard
+                {{ __('Dashboard') }}
             </x-jet-responsive-nav-link>
 
-            <x-jet-responsive-nav-link href="{{ route('projects.listing') }}" :active="request()->routeIs('projects.*')">
-                Projects
+            <x-jet-responsive-nav-link href="{{ route('projects') }}" :active="request()->routeIs('projects')">
+                {{ __('Projects') }}
             </x-jet-responsive-nav-link>
         </div>
 
@@ -168,12 +168,12 @@
             <div class="mt-3 space-y-1">
                 <!-- Account Management -->
                 <x-jet-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
-                    Profile
+                    {{ __('Profile') }}
                 </x-jet-responsive-nav-link>
 
                 @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                     <x-jet-responsive-nav-link href="{{ route('api-tokens.index') }}" :active="request()->routeIs('api-tokens.index')">
-                        API Tokens
+                        {{ __('API Tokens') }}
                     </x-jet-responsive-nav-link>
                 @endif
 
@@ -183,7 +183,7 @@
 
                     <x-jet-responsive-nav-link href="{{ route('logout') }}"
                                    @click.prevent="$root.submit();">
-                        Log Out
+                        {{ __('Log Out') }}
                     </x-jet-responsive-nav-link>
                 </form>
 
@@ -192,17 +192,17 @@
                     <div class="border-t border-gray-200"></div>
 
                     <div class="block px-4 py-2 text-xs text-gray-400">
-                        Manage Team
+                        {{ __('Manage Team') }}
                     </div>
 
                     <!-- Team Settings -->
                     <x-jet-responsive-nav-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" :active="request()->routeIs('teams.show')">
-                        Team Settings
+                        {{ __('Team Settings') }}
                     </x-jet-responsive-nav-link>
 
                     @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                         <x-jet-responsive-nav-link href="{{ route('teams.create') }}" :active="request()->routeIs('teams.create')">
-                            Create New Team
+                            {{ __('Create New Team') }}
                         </x-jet-responsive-nav-link>
                     @endcan
 
@@ -210,7 +210,7 @@
 
                     <!-- Team Switcher -->
                     <div class="block px-4 py-2 text-xs text-gray-400">
-                        Switch Teams
+                        {{ __('Switch Teams') }}
                     </div>
 
                     @foreach (Auth::user()->allTeams() as $team)

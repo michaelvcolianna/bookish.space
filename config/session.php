@@ -126,7 +126,10 @@ return [
     |
     */
 
-    'cookie' => env('SESSION_COOKIE', '_bookish--session_'),
+    'cookie' => env(
+        'SESSION_COOKIE',
+        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+    ),
 
     /*
     |--------------------------------------------------------------------------
